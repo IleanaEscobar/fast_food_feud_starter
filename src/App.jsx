@@ -5,6 +5,7 @@ import "./App.css"
 import Header from './components/Header/Header'
 import Instructions from './components/Instructions/Instructions'
 import Chip from './components/Chip/Chip'
+import NutritionalLabel from './components/NutritionalLabel/NutritionalLabel'
 import { useState } from 'react';
 
 // don't move this!
@@ -26,7 +27,13 @@ const { data, categories, restaurants } = createDataSet()
 
 export function App() {
 
-  const [foodStat, setFoodStat] = useState('')
+  const [foodState, setFoodState] = useState('')
+  const [restState, setRestState] = useState('')
+  const [menuState, setMenuState] = useState('')
+  console.log(data)
+  var currentMenuItems = data.filter(data => (data.restaurant == restState && data.food_category == foodState));
+  console.log('current:' + currentMenuItems)
+  console.log( 'Menu: ' + menuState)
 
   return (
     <main className="App">
@@ -38,12 +45,12 @@ export function App() {
             categories.map((item, indx) => (
               <Chip
                 handleClick={() => {
-                  console.log('halo')
-                  setFoodStat(item)
+                  // console.log('categories: ' + item)
+                  setFoodState(item)
                 }}
                 key={item}
                 label = {item}
-                isActive = {item == foodStat}
+                isActive = {item == foodState}
               >{item}</Chip>
             ))
           }
@@ -65,12 +72,12 @@ export function App() {
             restaurants.map((item, indx) => (
               <Chip
               handleClick={() => {
-                console.log('halo')
-                setFoodStat(item)
+                console.log('halo1')
+                setRestState(item)
               }}
               key={item}
               label = {item}
-              isActive = {item == foodStat}>{item}</Chip>
+              isActive = {item == restState}>{item}</Chip>
             ))
           }</div>
         </div>
@@ -88,11 +95,30 @@ export function App() {
         <div className="MenuDisplay display">
           <div className="MenuItemButtons menu-items">
             <h2 className="title">Menu Items</h2>
-            {/* YOUR CODE HERE */}
+            {
+            currentMenuItems.map((item,indx) => (
+              <div>
+              <Chip handleClick={() => {setMenuState(item)}} key={item.id}
+              label = {item.item_name}>{item}</Chip>
+              </div>
+            ))
+            }
           </div>
 
           {/* NUTRITION FACTS */}
-          <div className="NutritionFacts nutrition-facts">{/* YOUR CODE HERE */}</div>
+
+          <div className="NutritionFacts nutrition-facts">
+            {
+              (currentMenuItems.length > 0)?
+                (
+                <div>
+                <h4 className="item-name">{menuState.item_name}</h4>
+                <ul className="fact-list">
+                <NutritionalLabel menuItem={menuState}></NutritionalLabel>
+                </ul>
+                </div>) : (null)
+            }
+          </div>
         </div>
 
         <div className="data-sources">
